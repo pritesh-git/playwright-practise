@@ -1,0 +1,52 @@
+name: Playwright Smoke & Regression Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Select Test Suite to Run'
+        required: true
+        default: 'smoke'
+        type: choice
+        options:
+          - 'smoke'
+          - 'regression'
+          - 'both'
+  schedule:
+    # Run regression tests automatically every midnight (00:00 UTC)
+    - cron: '0 0 * * *'
+
+jobs:
+  smoke-and-regression:
+    name: Run ${{ github.event.inputs.test_suite || 'Scheduled Regression' }} Tests
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Smoke Tests
+        if: github.event.inputs.test_suite == 'smoke' || github.event.inputs.test_suite == 'both'
+        run: npm run test:smoke
+
+      - name: Run Regression Tests
+        if: github.event.inputs.test_suite == 'regression' || github.event.inputs.test_suite == 'both' || github.event_name == 'schedule'
+        run: npm run test:regression
+
+      - name: Upload HTML Test Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-${{ github.event.inputs.test_suite || 'scheduled-regression' }}-report
+          path: playwright-report/
+          retention-days: 30

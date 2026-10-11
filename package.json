@@ -1,0 +1,53 @@
+{
+  "name": "playwright-practise",
+  "version": "1.0.0",
+  "description": "Comprehensive Test Automation Suite for Automation Exercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:chromium": "playwright test --project=chromium",
+    "test:headed": "playwright test --project=chromium --headed",
+    "test:smoke": "playwright test --grep \"@smoke\" --project=chromium",
+    "test:regression": "playwright test --grep \"@regression\" --project=chromium",
+    "test:auth": "playwright test src/tests/auth.spec.ts --project=chromium",
+    "test:products": "playwright test src/tests/products.spec.ts --project=chromium",
+    "test:cart": "playwright test src/tests/cart.spec.ts --project=chromium",
+    "test:checkout": "playwright test src/tests/checkout.spec.ts --project=chromium",
+    "test:routes": "playwright test src/tests/routes-and-content.spec.ts --project=chromium",
+    "report": "playwright show-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "automationexercise",
+    "testing",
+    "e2e"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.12.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
+    "typescript-eslint": "^8.71.1"
+  }
+}
