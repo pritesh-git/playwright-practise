@@ -75,14 +75,25 @@ Run all tests in Chromium:
 npm run test:chromium
 ```
 
-Run individual module suites:
+Run test suites by tag or module:
 
 ```bash
+npm run test:smoke       # Smoke tests only (@smoke tag)
+npm run test:regression  # Full regression test suite (@regression tag)
 npm run test:auth        # Authentication & User Lifecycle tests
 npm run test:products    # Product Catalog, Search & Reviews tests
 npm run test:cart        # Shopping Cart & Quantity tests
 npm run test:checkout    # End-to-End Checkout & Payment tests
 npm run test:routes      # Navigation Routes & Content tests
+```
+
+Code formatting & linting:
+
+```bash
+npm run lint             # Run ESLint check
+npm run lint:fix         # Run ESLint with auto-fix
+npm run format           # Format codebase with Prettier
+npm run format:check     # Check formatting with Prettier
 ```
 
 Run tests in headed mode (interactive browser UI):
@@ -96,6 +107,31 @@ View the HTML test execution report:
 ```bash
 npm run report
 ```
+
+---
+
+## 🐶 Git Hooks (Husky & lint-staged)
+
+A Git pre-commit hook is configured via **Husky** (`.husky/pre-commit`) and **lint-staged**:
+
+- Automatically intercepts every `git commit`.
+- Runs `eslint --fix` and `prettier --write` on staged TypeScript and JavaScript files.
+- Formats staged Markdown, JSON, and YAML files.
+- Prevents unformatted code or lint failures from ever being committed.
+
+---
+
+## ⚡ GitHub Actions CI/CD Workflows
+
+### 1. Sharded Playwright Workflow (`.github/workflows/playwright.yml`)
+
+- **Parallel Sharding**: Distributes tests across 4 parallel runner shards (`--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`) using Playwright's `blob` reporter.
+- **Post-Job Report Merge**: The `merge-reports` job downloads all shard blob artifacts, merges them using `npx playwright merge-reports --reporter=html`, and uploads a single, unified HTML report.
+
+### 2. Smoke & Regression Workflow (`.github/workflows/smoke-regression.yml`)
+
+- **Manual Trigger**: Supports `workflow_dispatch` with a dropdown selection (`smoke`, `regression`, or `both`).
+- **Scheduled Cron**: Runs the full regression suite automatically on a nightly schedule (`0 0 * * *`).
 
 ---
 
