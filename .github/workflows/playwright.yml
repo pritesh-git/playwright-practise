@@ -7,11 +7,14 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   test:
     name: Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -22,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
@@ -46,13 +49,13 @@ jobs:
     name: Merge Blob Reports & Generate Single HTML Report
     if: ${{ !cancelled() }}
     needs: [test]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
           cache: 'npm'
 
       - name: Install dependencies
